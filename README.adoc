@@ -1,0 +1,40 @@
+= AWS
+
+----
+$ mkdir aws
+$ touch aws/config
+$ touch aws/credentials
+$ make bash
+In container
+$ aws configure
+----
+
+
+== aws/*
+* aws/config
+----
+[default]
+region = ap-northeast-1
+output = json
+----
+
+* aws/credentials
+----
+[default]
+aws_access_key_id = XXXXXX
+aws_secret_access_key = XXXXXX
+[suna-terraform-role]
+role_arn = arn:aws:iam::XXXXXX:role/suna-terraform
+source_profile = default
+----
+
+* スイッチロールができるかの確認
+----
+$ aws --profile suna-terraform-role sts get-caller-identity
+----
+or
+----
+$ make bash
+In container
+$ make test
+----
