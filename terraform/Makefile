@@ -12,3 +12,6 @@ apply: secret.tfvars
 
 test:
 	aws --profile suna-terraform-role sts get-caller-identity
+	aws --profile suna-sunabako-OrganizationAccountAccessRole sts get-caller-identity
+	aws --profile suna-development-OrganizationAccountAccessRole sts get-caller-identity
+	aws --profile suna-shared-OrganizationAccountAccessRole sts get-caller-identity
