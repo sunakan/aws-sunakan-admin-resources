@@ -15,3 +15,11 @@ test:
 	aws --profile suna-sunabako-OrganizationAccountAccessRole sts get-caller-identity
 	aws --profile suna-development-OrganizationAccountAccessRole sts get-caller-identity
 	aws --profile suna-shared-OrganizationAccountAccessRole sts get-caller-identity
+
+default-vpc:
+	VPC_IDS=$( \
+    aws --profile suna-development-OrganizationAccountAccessRole \
+    ec2 describe-vpcs --filters "Name=isDefault,Values=true" \
+    --query "Vpcs[].VpcId" \
+    --output text \
+  ) && echo ${VPC_IDS}
