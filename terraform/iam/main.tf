@@ -114,12 +114,6 @@ resource "aws_iam_group_policy_attachment" "attach_read_only_access_to_suna_read
 data "aws_iam_policy_document" "assume_role_policy_for_other_account_read_only_role" {
   statement {
     actions = ["sts:AssumeRole"]
-    #principals {
-    #  type        = "AWS"
-    #  identifiers = [
-    #    "arn:aws:iam::${data.aws_caller_identity.master.account_id}:user/",
-    #  ]
-    #}
     resources = [
       aws_iam_role.suna_read_only_for_development.arn,
       aws_iam_role.suna_read_only_for_shared.arn,
@@ -189,4 +183,67 @@ resource "aws_iam_role_policy_attachment" "attach_read_only_access_to_suna_read_
   provider   = aws.suna_shared
   role       = aws_iam_role.suna_read_only_for_shared.name
   policy_arn = "arn:aws:iam::aws:policy/ReadOnlyAccess"
+}
+
+################################################################################
+# Role for Cacoo
+################################################################################
+data "aws_iam_policy_document" "suna_cacoo_assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "AWS"
+      identifiers = ["631054961367"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "sts:ExternalId"
+      values = [
+        "Cacoo-AWS-Integration"
+      ]
+    }
+  }
+}
+data "aws_iam_policy_document" "suna_cacoo_policy" {
+  statement {
+    actions = [
+      "cloudfront:ListDistributions",
+      "ec2:DescribeInstances",
+      "ec2:DescribeSecurityGroups",
+      "ec2:DescribeSubnets",
+      "ec2:DescribeVpcs",
+      "ec2:DescribeAvailabilityZones",
+      "elasticloadbalancing:DescribeLoadBalancers",
+      "elasticloadbalancing:DescribeTargetGroups",
+      "elasticloadbalancing:DescribeTargetHealth",
+      "elasticache:DescribeCacheSubnetGroups",
+      "elasticache:DescribeCacheClusters",
+      "rds:DescribeDBInstances",
+      "s3:ListAllMyBuckets",
+      "s3:GetBucketLocation",
+      "sns:ListTopics",
+      "sns:GetTopicAttributes",
+      "sqs:ListQueues",
+      "ec2:DescribeRouteTables",
+      "ec2:DescribeNatGateways"
+    ]
+    resources = ["*"]
+  }
+}
+resource "aws_iam_role" "suna_cacoo_role_for_development" {
+  provider           = aws.suna_development
+  name               = "suna-cacoo"
+  assume_role_policy = data.aws_iam_policy_document.suna_cacoo_assume_role_policy.json
+}
+resource "aws_iam_policy" "suna_cacoo_policy_for_development" {
+  provider    = aws.suna_development
+  name        = "suna-cacoo"
+  path        = "/"
+  description = "readable resources for cacoo"
+  policy      = data.aws_iam_policy_document.suna_cacoo_policy.json
+}
+resource "aws_iam_role_policy_attachment" "attach_cacoo_policy_to_cacoo_role_for_development" {
+  provider   = aws.suna_development
+  role       = aws_iam_role.suna_cacoo_role_for_development.name
+  policy_arn = aws_iam_policy.suna_cacoo_policy_for_development.arn
 }
