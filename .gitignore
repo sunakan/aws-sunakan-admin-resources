@@ -1,5 +1,6 @@
 tmp
 aws
+aws-conf
 secret*
 
 # Created by https://www.gitignore.io/api/linux,macos,windows,terraform,intellij+all
