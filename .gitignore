@@ -2,6 +2,7 @@ tmp
 aws
 aws-conf
 secret*
+.env
 
 # Created by https://www.gitignore.io/api/linux,macos,windows,terraform,intellij+all
 # Edit at https://www.gitignore.io/?templates=linux,macos,windows,terraform,intellij+all
